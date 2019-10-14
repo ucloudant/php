@@ -7,6 +7,7 @@ RUN sed -i -e "s/archive.ubuntu.com/mirrors.aliyun.com/g" /etc/apt/sources.list 
     && apt-get install -y \
         software-properties-common \
         curl \
+        unzip \
     && add-apt-repository ppa:stesie/libv8 \
     && add-apt-repository ppa:ondrej/php \
     && apt-get update \
