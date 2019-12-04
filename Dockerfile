@@ -14,4 +14,8 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
     && pecl install swoole \
     && docker-php-ext-enable swoole \
     && apk del .build-deps \
-    && apk del .phpize-deps
+    && apk del .phpize-deps \
+    && curl https://getcomposer.org/installer > composer-setup.php \
+    && php composer-setup.php \
+    && mv composer.phar /usr/local/bin/composer \
+    && rm composer-setup.php
