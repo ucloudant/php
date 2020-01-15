@@ -7,6 +7,8 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
     && docker-php-ext-install -j$(nproc) gd \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && pecl install apcu \
