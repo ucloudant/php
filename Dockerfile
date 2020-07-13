@@ -1,23 +1,51 @@
 FROM php:fpm-alpine
-RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
-    && apk add --no-cache freetype libjpeg-turbo libpng libssl1.1 libzip libpq libstdc++ icu-libs \
-    && apk add --no-cache --virtual .build-deps freetype-dev libjpeg-turbo-dev libpng-dev openssl-dev libzip-dev postgresql-dev \
-    && docker-php-ext-install pdo_mysql pdo_pgsql opcache zip exif pcntl \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && pecl install mongodb \
-    && docker-php-ext-enable mongodb \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && pecl install apcu \
-    && docker-php-ext-enable apcu \
-    && pecl install swoole \
-    && docker-php-ext-enable swoole \
-    && apk del .build-deps \
-    && apk del .phpize-deps \
-    && curl https://getcomposer.org/installer > composer-setup.php \
-    && php composer-setup.php \
-    && mv composer.phar /usr/local/bin/composer \
-    && rm composer-setup.php
+
+RUN apk add --no-cache \
+		acl \
+		file \
+		gettext \
+		git \
+		openssl \
+	;
+
+RUN set -eux; \
+	apk add --no-cache --virtual .build-deps \
+		$PHPIZE_DEPS \
+		icu-dev \
+		libzip-dev \
+		postgresql-dev \
+		zlib-dev \
+	; \
+	\
+	docker-php-ext-configure zip --with-libzip; \
+	docker-php-ext-install -j$(nproc) \
+		intl \
+		pdo_pgsql \
+		zip \
+	; \
+	pecl install \
+		apcu \
+	; \
+	pecl clear-cache; \
+	docker-php-ext-enable \
+		apcu \
+		opcache \
+	; \
+	\
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-cache --virtual .mc-phpexts-rundeps $runDeps; \
+	\
+	apk del .build-deps
+
+RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
+    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/$version \
+    && mkdir -p /tmp/blackfire \
+    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
+    && mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
+    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
+    && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
