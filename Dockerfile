@@ -55,3 +55,5 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN set -eux; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+
+RUN ln -s $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini 	
