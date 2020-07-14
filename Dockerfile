@@ -1,12 +1,13 @@
 FROM php:fpm-alpine
 
+# persistent / runtime deps
 RUN apk add --no-cache \
 		acl \
+		fcgi \
 		file \
 		gettext \
 		git \
-		openssl \
-	;
+	; 
 
 RUN set -eux; \
 	apk add --no-cache --virtual .build-deps \
@@ -17,6 +18,7 @@ RUN set -eux; \
 		zlib-dev \
 	; \
 	\
+	docker-php-ext-configure zip; \ 
 	docker-php-ext-install -j$(nproc) \
 		intl \
 		pdo_pgsql \
@@ -52,7 +54,4 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN set -eux; \
-    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/; \
-	composer clear-cache
-
-ENV PATH="${PATH}:/root/.composer/vendor/bin"
+    composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
