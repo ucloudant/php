@@ -23,6 +23,9 @@ RUN set -eux; \
 		intl \
 		pdo_pgsql \
 		zip \
+		pdo_mysql \
+		mongodb \
+		redis \
 	; \
 	pecl install \
 		apcu \
