@@ -24,16 +24,18 @@ RUN set -eux; \
 		pdo_pgsql \
 		zip \
 		pdo_mysql \
-		mongodb \
-		redis \
 	; \
 	pecl install \
 		apcu \
+		mongodb \
+		redis \
 	; \
 	pecl clear-cache; \
 	docker-php-ext-enable \
 		apcu \
 		opcache \
+		mongodb \
+		redis \
 	; \
 	\
 	runDeps="$( \
@@ -42,7 +44,7 @@ RUN set -eux; \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 	)"; \
-	apk add --no-cache --virtual .mc-phpexts-rundeps $runDeps; \
+	apk add --no-cache --virtual .phpexts-rundeps $runDeps; \
 	\
 	apk del .build-deps
 
