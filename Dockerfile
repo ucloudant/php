@@ -16,9 +16,13 @@ RUN set -eux; \
 		libzip-dev \
 		postgresql-dev \
 		zlib-dev \
+		freetype-dev \
+		libjpeg-turbo-dev \
+		libpng-dev \
 	; \
 	\
 	docker-php-ext-configure zip; \ 
+	docker-php-ext-configure gd --with-freetype --with-jpeg; \ 
 	docker-php-ext-install -j$(nproc) \
 		intl \
 		pdo_pgsql \
