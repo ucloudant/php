@@ -30,6 +30,7 @@ RUN set -eux; \
 		pdo_mysql \
 	; \
 	pecl install \
+		gd \
 		apcu \
 		mongodb \
 		redis \
