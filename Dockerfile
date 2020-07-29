@@ -28,9 +28,9 @@ RUN set -eux; \
 		pdo_pgsql \
 		zip \
 		pdo_mysql \
+		gd \
 	; \
 	pecl install \
-		gd \
 		apcu \
 		mongodb \
 		redis \
