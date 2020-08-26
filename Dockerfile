@@ -1,4 +1,7 @@
-FROM php:fpm-alpine
+# https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG PHP_VERSION=7.4
+
+FROM php:${PHP_VERSION}-fpm-alpine
 
 # persistent / runtime deps
 RUN apk add --no-cache \
