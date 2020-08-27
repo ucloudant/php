@@ -2,6 +2,8 @@
 ARG PHP_VERSION=7.4
 ARG COMPOSER_VERSION=2
 
+FROM composer:${COMPOSER_VERSION} as composer
+
 FROM php:${PHP_VERSION}-fpm-alpine
 
 # persistent / runtime deps
@@ -65,7 +67,7 @@ RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
     && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
     && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
 
-COPY --from=composer:${COMPOSER_VERSION} /usr/bin/composer /usr/bin/composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN set -eux; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
