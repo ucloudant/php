@@ -52,7 +52,7 @@ RUN set -eux; \
 	pickle install -n --defaults --strip --cleanup --no-write \
 		https://github.com/xdebug/xdebug/archive/master.tar.gz \
 		https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
-		https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/74 \
+		https://packages.blackfire.io/binaries/blackfire-php/1.39.1/blackfire-php-alpine_amd64-php-74.tar.gz \
 	; \
 	pickle install opcache; \
 	runDeps="$( \
