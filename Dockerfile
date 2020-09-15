@@ -1,4 +1,3 @@
-# https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG PHP_VERSION=7.4
 ARG COMPOSER_VERSION=2
 
@@ -6,49 +5,57 @@ FROM composer:${COMPOSER_VERSION} as composer
 
 FROM php:${PHP_VERSION}-fpm-alpine
 
-# persistent / runtime deps
-RUN apk add --no-cache \
-		acl \
-		fcgi \
-		file \
-		gettext \
-		git \
-	; 
-
 RUN set -eux; \
+	apk add --no-cache \
+		fcgi \
+		acl \
+	; \
 	apk add --no-cache --virtual .build-deps \
 		$PHPIZE_DEPS \
-		icu-dev \
 		libzip-dev \
-		postgresql-dev \
-		zlib-dev \
 		freetype-dev \
 		libjpeg-turbo-dev \
 		libpng-dev \
+		libxpm-dev \
+		libwebp-dev \
+		postgresql-dev \
+		zstd-dev \
+		libffi-dev \
 	; \
-	\
-	docker-php-ext-configure zip; \ 
-	docker-php-ext-configure gd --with-freetype --with-jpeg; \ 
-	docker-php-ext-install -j$(nproc) \
-		intl \
-		pdo_pgsql \
-		zip \
-		pdo_mysql \
+	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/nightly/pickle-debug.phar; \
+	chmod +x /usr/local/bin/pickle; \
+# 安装内置扩展
+	docker-php-source extract; \
+    docker-php-ext-install zip; \
+	strip --strip-all $(php -r "echo ini_get('extension_dir');")/zip.so; \
+	echo " \
+		--with-freetype \
+		--with-jpeg \
+		--with-webp \
+		--with-xpm" > /tmp/gd.configure.options; \
+	pickle install -n --defaults --strip --cleanup \
 		gd \
+		pdo_mysql \
+		pdo_pgsql \
+		ffi \
 	; \
-	pecl install \
+	docker-php-source delete; \
+# 安装 PECL 扩展
+	echo "--with-libzstd" > /tmp/zstd.configure.options; \
+	pickle install -n --defaults --strip --cleanup \
 		apcu \
+		zstd \
 		mongodb \
 		redis \
+		wasm \
 	; \
-	pecl clear-cache; \
-	docker-php-ext-enable \
-		apcu \
-		opcache \
-		mongodb \
-		redis \
+# 默认不启用的扩展
+	pickle install -n --defaults --strip --cleanup --no-write \
+		https://github.com/xdebug/xdebug/archive/master.tar.gz \
+		https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+		https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/74 \
 	; \
-	\
+	pickle install opcache; \
 	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
 			| tr ',' '\n' \
@@ -57,17 +64,10 @@ RUN set -eux; \
 	)"; \
 	apk add --no-cache --virtual .phpexts-rundeps $runDeps; \
 	\
-	apk del .build-deps
+	apk del .build-deps; \
+	rm -rf /tmp/*
 
-RUN version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;") \
-    && curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/$version \
-    && mkdir -p /tmp/blackfire \
-    && tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire \
-    && mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get('extension_dir');")/blackfire.so \
-    && printf "extension=blackfire.so\nblackfire.agent_socket=tcp://blackfire:8707\n" > $PHP_INI_DIR/conf.d/blackfire.ini \
-    && rm -rf /tmp/blackfire /tmp/blackfire-probe.tar.gz
-
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN set -eux; \
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
