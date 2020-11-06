@@ -24,8 +24,6 @@ RUN set -eux; \
 	; \
 	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/nightly/pickle-debug.phar; \
 	chmod +x /usr/local/bin/pickle; \
-	curl -fsSL -o /usr/local/bin/pickle https://github.com/symfony/cli/releases/download/v4.20.1/symfony_linux_amd64.gz; \
-	chmod +x /usr/local/bin/symfony; \
 	# 安装内置扩展
 	docker-php-source extract; \
 	docker-php-ext-install zip; \
