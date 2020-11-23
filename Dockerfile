@@ -50,7 +50,7 @@ RUN set -eux; \
 	; \
 	# 默认不启用的扩展
 	pickle install -n --defaults --strip --cleanup --no-write \
-	https://github.com/xdebug/xdebug/archive/master.tar.gz \
+	xdebug-beta \
 	https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
 	; \
 	pickle install opcache; \
