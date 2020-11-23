@@ -73,9 +73,17 @@ RUN set -eux; \
 	apk del .build-deps; \
 	rm -rf /tmp/*
 
+# 安装composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+# 设置composer国内镜像
 RUN set -eux; \
 	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
+# 安装symfony-cli
 COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
+
+# 安装php-cs-fixer
+RUN set -eux; \
+	curl -o /usr/local/bin/php-cs-fixer -L https://cs.symfony.com/download/php-cs-fixer-v2.phar; \
+	chmod +x /usr/local/bin/php-cs-fixer;
