@@ -2,10 +2,16 @@ ARG PHP_VERSION=8.0
 ARG COMPOSER_VERSION=2
 
 FROM composer:${COMPOSER_VERSION} as composer
+FROM php:${PHP_VERSION}-fpm-alpine
 
-FROM php:${PHP_VERSION}-rc-fpm-alpine
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
 
 RUN set -eux; \
+	# 设置 composer 国内镜像
+	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
+	# 安装 pickle
+	composer require -g khs1994/pickle \
 	apk add --no-cache \
 	fcgi \
 	acl \
@@ -22,8 +28,6 @@ RUN set -eux; \
 	zstd-dev \
 	libffi-dev \
 	; \
-	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/nightly/pickle-debug.phar; \
-	chmod +x /usr/local/bin/pickle; \
 	# 安装内置扩展
 	docker-php-source extract; \
 	docker-php-ext-install zip; \
@@ -46,12 +50,11 @@ RUN set -eux; \
 	apcu \
 	zstd \
 	redis \
-	mongodb-beta \
+	mongodb \
 	; \
 	# 默认不启用的扩展
 	pickle install -n --defaults --strip --cleanup --no-write \
-	xdebug-beta \
-	https://github.com/tideways/php-xhprof-extension/archive/master.tar.gz \
+	xdebug \
 	; \
 	pickle install opcache; \
 	runDeps="$( \
@@ -64,8 +67,3 @@ RUN set -eux; \
 	\
 	apk del .build-deps; \
 	rm -rf /tmp/*
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-RUN set -eux; \
-	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
