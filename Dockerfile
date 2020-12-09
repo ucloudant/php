@@ -13,6 +13,7 @@ RUN set -eux; \
 	apk add --no-cache \
 	fcgi \
 	acl \
+	tzdata \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
