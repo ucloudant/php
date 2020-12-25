@@ -73,6 +73,4 @@ RUN set -eux; \
 	apk add --no-cache --virtual .phpexts-rundeps $runDeps; \
 	\
 	apk del .build-deps; \
-	rm -rf /tmp/*; \
-	# 设置 composer 国内镜像
-	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+	rm -rf /tmp/*;
