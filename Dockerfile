@@ -1,15 +1,17 @@
 ARG PHP_VERSION=7.4
 ARG COMPOSER_VERSION=2
+ARG SDKTOOLS_VERSION=1.0.1
 
 FROM composer:${COMPOSER_VERSION} as composer
+FROM ucloudant/sdktools:${SDKTOOLS_VERSION} as sdktools
 FROM php:${PHP_VERSION}-fpm-buster
 
 ARG PICKLE_VERSION=19.11.11
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
-COPY --from=ucloudant/sdktools /sdktools /usr/bin/sdktools
-COPY --from=ucloudant/sdktools /lib64/libWeWorkFinanceSdk_C.so /lib64/libWeWorkFinanceSdk_C.so
+COPY --from=sdktools /sdktools /usr/bin/sdktools
+COPY --from=sdktools /lib64/libWeWorkFinanceSdk_C.so /lib64/libWeWorkFinanceSdk_C.so
 
 ENV BUILD_DEPS \
 	libfreetype6-dev \
