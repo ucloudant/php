@@ -18,6 +18,7 @@ ENV BUILD_DEPS \
     libwebp-dev \
     libxpm-dev \
     libzip-dev \
+	libpq-dev \
     libicu-dev \
     libzstd-dev \
     libffi-dev
