@@ -9,7 +9,7 @@ ARG PICKLE_VERSION=19.11.11
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
 COPY --from=ucloudant/sdktools /sdktools /usr/bin/sdktools
-COPY --from=ucloudant/sdktools /libWeWorkFinanceSdk_C.so /usr/bin/libWeWorkFinanceSdk_C.so
+COPY --from=ucloudant/sdktools /lib64/libWeWorkFinanceSdk_C.so /lib64/libWeWorkFinanceSdk_C.so
 
 ENV BUILD_DEPS \
 	libfreetype6-dev \
