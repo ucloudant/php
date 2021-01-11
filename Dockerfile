@@ -2,31 +2,31 @@ ARG PHP_VERSION=7.4
 ARG COMPOSER_VERSION=2
 
 FROM composer:${COMPOSER_VERSION} as composer
-FROM php:${PHP_VERSION}-fpm-alpine
+FROM php:${PHP_VERSION}-fpm-buster
 
 ARG PICKLE_VERSION=19.11.11
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
 
-RUN set -eux; \
-	apk add --no-cache \
-	fcgi \
-	acl \
-	tzdata \
-	; \
-	apk add --no-cache --virtual .build-deps \
-	$PHPIZE_DEPS \
-	libzip-dev \
-	freetype-dev \
-	libjpeg-turbo-dev \
+ENV BUILD_DEPS \
+	libfreetype6-dev \
+	libjpeg62-turbo-dev \
 	libpng-dev \
-	libxpm-dev \
-	libwebp-dev \
-	postgresql-dev \
-	zstd-dev \
-	libffi-dev \
-	; \
+    libwebp-dev \
+    libxpm-dev \
+    libzip-dev \
+    libicu-dev \
+    libzstd-dev \
+    libffi-dev
+
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y \
+    acl \
+	libfcgi-bin \
+	$BUILD_DEPS \
+    ; \
 	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/v${PICKLE_VERSION}/pickle.phar; \
 	chmod +x /usr/local/bin/pickle; \
 	# 安装内置扩展
@@ -60,19 +60,13 @@ RUN set -eux; \
 	pickle install opcache; \
 	# 安装 Blackfire 扩展, 默认不开启
 	version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;"); \
-	curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/$version; \
+	curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$version; \
     mkdir -p /tmp/blackfire; \
 	tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire; \
 	mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get ('extension_dir');")/blackfire.so; \
-	runDeps="$( \
-	scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
-	| tr ',' '\n' \
-	| sort -u \
-	| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)"; \
-	apk add --no-cache --virtual .phpexts-rundeps $runDeps; \
-	\
-	apk del .build-deps; \
-	rm -rf /tmp/*; \
-	# 设置 composer 国内镜像
-	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+ 	apt-get remove -y \
+    $PHPIZE_DEPS \
+    $BUILD_DEPS \
+    ; \
+    apt-get clean; \
+	rm -rf /tmp/*;
