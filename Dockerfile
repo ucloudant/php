@@ -22,6 +22,7 @@ ENV BUILD_DEPS \
     libzip-dev \
 	libpq-dev \
     libicu-dev \
+	libssl-dev \
     libzstd-dev \
     libffi-dev
 
@@ -48,10 +49,12 @@ RUN set -eux; \
 	pdo_mysql \
 	pdo_pgsql \
 	intl \
+	exif \
 	; \
 	docker-php-source delete; \
 	# 安装 PECL 扩展
 	echo "--with-libzstd" > /tmp/zstd.configure.options; \
+	echo "--with-libzstd" > /tmp/mongodb.configure.options; \
 	pickle install -n --defaults --strip --cleanup \
 	apcu \
 	zstd \
