@@ -43,6 +43,8 @@ RUN set -eux; \
 	pdo_mysql \
 	pdo_pgsql \
 	intl \
+	exif \
+	ldap \
 	; \
 	docker-php-source delete; \
 	# 安装 PECL 扩展
