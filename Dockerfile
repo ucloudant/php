@@ -77,4 +77,6 @@ RUN set -eux; \
     $BUILD_DEPS \
     ; \
     apt-get clean; \
-	rm -rf /tmp/*;
+	rm -rf /tmp/*; \
+	usermod -u 82 www-data; \
+	groupmod -g 82 www-data;
