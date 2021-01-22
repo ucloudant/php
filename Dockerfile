@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.4
+ARG PHP_VERSION=7.4.13
 ARG COMPOSER_VERSION=2
 
 FROM composer:${COMPOSER_VERSION} as composer
@@ -13,7 +13,6 @@ RUN set -eux; \
 	apk add --no-cache \
 	fcgi \
 	acl \
-	tzdata \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
@@ -73,6 +72,4 @@ RUN set -eux; \
 	apk add --no-cache --virtual .phpexts-rundeps $runDeps; \
 	\
 	apk del .build-deps; \
-	rm -rf /tmp/*; \
-	# 设置 composer 国内镜像
-	composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+	rm -rf /tmp/*;
