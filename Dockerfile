@@ -3,6 +3,7 @@ ARG COMPOSER_VERSION=2
 ARG SDKTOOLS_VERSION=1.0.3
 
 FROM composer:${COMPOSER_VERSION} as composer
+FROM ucloudant/sdktools:${SDKTOOLS_VERSION} as sdktools
 FROM php:${PHP_VERSION}-fpm-buster
 
 ARG PICKLE_VERSION=19.11.11
