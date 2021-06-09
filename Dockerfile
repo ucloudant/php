@@ -50,6 +50,7 @@ RUN set -eux; \
 	pdo_pgsql \
 	intl \
 	exif \
+	amqp \
 	; \
 	docker-php-source delete; \
 	# 安装 PECL 扩展
