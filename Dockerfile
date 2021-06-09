@@ -26,6 +26,7 @@ RUN set -eux; \
 	postgresql-dev \
 	zstd-dev \
 	libffi-dev \
+	rabbitmq-c-dev \
 	; \
 	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/v${PICKLE_VERSION}/pickle.phar; \
 	chmod +x /usr/local/bin/pickle; \
