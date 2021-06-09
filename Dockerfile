@@ -25,7 +25,7 @@ ENV BUILD_DEPS \
 	libssl-dev \
     libzstd-dev \
     libffi-dev \
-	rabbitmq-c-dev
+	librabbitmq-dev
 
 RUN set -eux; \
 	apt-get update; \
