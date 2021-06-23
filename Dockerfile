@@ -24,7 +24,8 @@ ENV BUILD_DEPS \
     libicu-dev \
 	libssl-dev \
     libzstd-dev \
-    libffi-dev
+    libffi-dev \
+	librabbitmq-dev
 
 RUN set -eux; \
 	apt-get update; \
@@ -50,6 +51,7 @@ RUN set -eux; \
 	pdo_pgsql \
 	intl \
 	exif \
+	amqp \
 	; \
 	docker-php-source delete; \
 	# 安装 PECL 扩展
