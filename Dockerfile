@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.1 
 ARG COMPOSER_VERSION=2
 
 FROM composer:${COMPOSER_VERSION} as composer
@@ -60,10 +60,11 @@ RUN set -eux; \
 	; \
 	pickle install opcache; \
 	version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;"); \
-	curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/$version; \
+    architecture=$(uname -m); \
+    curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/alpine/$architecture/$version; \
     mkdir -p /tmp/blackfire; \
-	tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire; \
-	mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get ('extension_dir');")/blackfire.so; \
+    tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire; \
+    mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get ('extension_dir');")/blackfire.so; \
 	runDeps="$( \
 	scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/lib/php/extensions \
 	| tr ',' '\n' \
