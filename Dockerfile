@@ -52,6 +52,8 @@ RUN set -eux; \
 	intl \
 	exif \
 	amqp \
+	grpc \
+	protobuf \
 	; \
 	docker-php-source delete; \
 	# 安装 PECL 扩展
@@ -65,14 +67,14 @@ RUN set -eux; \
 	# 默认不启用的扩展
 	pickle install -n --defaults --strip --cleanup --no-write \
 	xdebug \
-	# /tmp/blackfire \
 	; \
 	pickle install opcache; \
 	version=$(php -r "echo PHP_MAJOR_VERSION.PHP_MINOR_VERSION;"); \
-	curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/alpine/amd64/$version; \
+    architecture=$(uname -m); \
+    curl -A "Docker" -o /tmp/blackfire-probe.tar.gz -D - -L -s https://blackfire.io/api/v1/releases/probe/php/linux/$architecture/$version; \
     mkdir -p /tmp/blackfire; \
-	tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire; \
-	mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get ('extension_dir');")/blackfire.so; \
+    tar zxpf /tmp/blackfire-probe.tar.gz -C /tmp/blackfire; \
+    mv /tmp/blackfire/blackfire-*.so $(php -r "echo ini_get ('extension_dir');")/blackfire.so; \
  	apt-get remove -y \
     $PHPIZE_DEPS \
     $BUILD_DEPS \
