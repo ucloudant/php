@@ -4,15 +4,15 @@ ARG COMPOSER_VERSION=2
 FROM composer:${COMPOSER_VERSION} as composer
 FROM php:${PHP_VERSION}-fpm-alpine
 
-ARG PICKLE_VERSION=19.11.11
-
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
+COPY pickle /usr/bin/pickle
 
 RUN set -eux; \
 	apk add --no-cache \
 	fcgi \
 	acl \
+	git \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
@@ -26,8 +26,7 @@ RUN set -eux; \
 	zstd-dev \
 	libffi-dev \
 	; \
-	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/v${PICKLE_VERSION}/pickle.phar; \
-	chmod +x /usr/local/bin/pickle; \
+	chmod +x /usr/bin/pickle; \
 	# 安装内置扩展
 	docker-php-source extract; \
 	docker-php-ext-install zip; \
