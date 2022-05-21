@@ -14,6 +14,7 @@ RUN set -eux; \
 	acl \
 	tzdata \
 	git \
+	gmp \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
@@ -26,6 +27,7 @@ RUN set -eux; \
 	postgresql-dev \
 	zstd-dev \
 	libffi-dev \
+	gmp-dev \
 	; \
 	chmod +x /usr/bin/pickle; \
 	# 安装内置扩展
@@ -42,6 +44,7 @@ RUN set -eux; \
 	pdo_mysql \
 	pdo_pgsql \
 	intl \
+	gmp \
 	; \
 	docker-php-source delete; \
 	# 安装 PECL 扩展
