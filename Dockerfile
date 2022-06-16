@@ -13,6 +13,8 @@ RUN set -eux; \
 	fcgi \
 	acl \
 	git \
+	yasm \
+    ffmpeg \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
