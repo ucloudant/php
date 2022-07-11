@@ -15,6 +15,8 @@ RUN set -eux; \
 	tzdata \
 	git \
 	gmp \
+	yasm \
+	ffmpeg \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
