@@ -6,12 +6,11 @@ FROM composer:${COMPOSER_VERSION} as composer
 FROM ucloudant/sdktools:${SDKTOOLS_VERSION} as sdktools
 FROM php:${PHP_VERSION}-fpm-buster
 
-ARG PICKLE_VERSION=19.11.11
-
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
 COPY --from=sdktools /sdktools /usr/bin/sdktools
 COPY --from=sdktools /lib64/libWeWorkFinanceSdk_C.so /lib64/libWeWorkFinanceSdk_C.so
+COPY pickle /usr/bin/pickle
 
 ENV BUILD_DEPS \
 	libfreetype6-dev \
@@ -35,8 +34,7 @@ RUN set -eux; \
 	ffmpeg \
 	$BUILD_DEPS \
     ; \
-	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/v${PICKLE_VERSION}/pickle.phar; \
-	chmod +x /usr/local/bin/pickle; \
+	chmod +x /usr/bin/pickle; \
 	# 安装内置扩展
 	docker-php-source extract; \
 	docker-php-ext-install zip; \
