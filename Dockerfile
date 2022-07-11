@@ -32,6 +32,7 @@ RUN set -eux; \
 	apt-get install -y \
     acl \
 	libfcgi-bin \
+	ffmpeg \
 	$BUILD_DEPS \
     ; \
 	curl -fsSL -o /usr/local/bin/pickle https://github.com/khs1994-php/pickle/releases/download/v${PICKLE_VERSION}/pickle.phar; \
