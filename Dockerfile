@@ -17,6 +17,7 @@ RUN set -eux; \
 	gmp \
 	yasm \
 	ffmpeg \
+	gcompat \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
