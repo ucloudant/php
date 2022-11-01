@@ -5,7 +5,7 @@ FROM composer:${COMPOSER_VERSION} as composer
 FROM php:${PHP_VERSION}-fpm-alpine
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
+COPY symfony /usr/bin/symfony
 COPY pickle /usr/bin/pickle
 
 RUN set -eux; \
@@ -15,6 +15,7 @@ RUN set -eux; \
 	git \
 	yasm \
     ffmpeg \
+	poppler-utils \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
@@ -56,7 +57,7 @@ RUN set -eux; \
 	; \
 	# 默认不启用的扩展
 	pickle install -n --defaults --strip --cleanup --no-write \
-	xdebug \
+	xdebug@3.1.5 \
 	; \
 	pickle install opcache; \
 	# 安装 Blackfire 扩展, 默认不开启
