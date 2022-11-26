@@ -16,6 +16,7 @@ RUN set -eux; \
 	yasm \
     ffmpeg \
 	poppler-utils \
+	libreoffice \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
