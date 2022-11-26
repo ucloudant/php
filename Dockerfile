@@ -5,7 +5,7 @@ FROM composer:${COMPOSER_VERSION} as composer
 FROM php:${PHP_VERSION}-fpm-alpine
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-COPY --from=symfonycorp/cli /symfony /usr/bin/symfony
+COPY symfony /usr/bin/symfony
 COPY pickle /usr/bin/pickle
 
 RUN set -eux; \
