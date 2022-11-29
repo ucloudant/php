@@ -30,6 +30,7 @@ RUN set -eux; \
 	zstd-dev \
 	libffi-dev \
 	; \
+	chmod +x /usr/bin/symfony; \
 	chmod +x /usr/bin/pickle; \
 	# 安装内置扩展
 	docker-php-source extract; \
@@ -55,6 +56,7 @@ RUN set -eux; \
 	zstd \
 	mongodb \
 	redis \
+	imagick \
 	; \
 	# 默认不启用的扩展
 	pickle install -n --defaults --strip --cleanup --no-write \
