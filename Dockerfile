@@ -17,6 +17,7 @@ RUN set -eux; \
     ffmpeg \
 	poppler-utils \
 	libreoffice \
+	imagemagick-libs \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
@@ -29,8 +30,8 @@ RUN set -eux; \
 	postgresql-dev \
 	zstd-dev \
 	libffi-dev \
+	imagemagick-dev \
 	; \
-	chmod +x /usr/bin/symfony; \
 	chmod +x /usr/bin/pickle; \
 	# 安装内置扩展
 	docker-php-source extract; \
