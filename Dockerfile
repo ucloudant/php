@@ -57,6 +57,7 @@ RUN set -eux; \
 	zstd \
 	redis \
 	mongodb \
+	imagick \
 	; \
 	# 默认不启用的扩展
 	pickle install -n --defaults --strip --cleanup --no-write \
