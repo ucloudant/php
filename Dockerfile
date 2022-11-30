@@ -18,6 +18,7 @@ RUN set -eux; \
 	yasm \
 	ffmpeg \
 	gcompat \
+	imagemagick-libs \
 	; \
 	apk add --no-cache --virtual .build-deps \
 	$PHPIZE_DEPS \
@@ -31,6 +32,7 @@ RUN set -eux; \
 	zstd-dev \
 	libffi-dev \
 	gmp-dev \
+	imagemagick-dev \
 	; \
 	chmod +x /usr/bin/pickle; \
 	# 安装内置扩展
